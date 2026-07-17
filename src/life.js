@@ -26,6 +26,54 @@ export function step(src, size, wrap = false) {
   return dst;
 }
 
+// Tracks how many times each live cell's lineage has wound around the torus, so
+// the renderer can draw cells at unwrapped positions and trajectories cross the
+// seam seamlessly. Survivors inherit their own offset; births take a majority
+// vote over the implied offsets of their live parent neighbors.
+export function stepOffsets(src, next, size, prevOx, prevOz) {
+  const ox = new Int8Array(size * size);
+  const oz = new Int8Array(size * size);
+  for (let z = 0; z < size; z++) {
+    for (let x = 0; x < size; x++) {
+      const i = z * size + x;
+      if (!next[i]) continue;
+      if (src[i]) {
+        ox[i] = prevOx[i];
+        oz[i] = prevOz[i];
+        continue;
+      }
+      let bestCount = 0;
+      let bestOx = 0;
+      let bestOz = 0;
+      const counts = new Map();
+      for (let dz = -1; dz <= 1; dz++) {
+        for (let dx = -1; dx <= 1; dx++) {
+          if (dx === 0 && dz === 0) continue;
+          const tx = x + dx;
+          const tz = z + dz;
+          const wx = tx < 0 ? -1 : tx >= size ? 1 : 0;
+          const wz = tz < 0 ? -1 : tz >= size ? 1 : 0;
+          const ni = (tz - wz * size) * size + (tx - wx * size);
+          if (!src[ni]) continue;
+          const cox = prevOx[ni] - wx;
+          const coz = prevOz[ni] - wz;
+          const key = (cox + 16) * 64 + (coz + 16);
+          const c = (counts.get(key) || 0) + 1;
+          counts.set(key, c);
+          if (c > bestCount) {
+            bestCount = c;
+            bestOx = cox;
+            bestOz = coz;
+          }
+        }
+      }
+      ox[i] = bestOx;
+      oz[i] = bestOz;
+    }
+  }
+  return { ox, oz };
+}
+
 export function popCount(grid) {
   let s = 0;
   for (let i = 0; i < grid.length; i++) s += grid[i];

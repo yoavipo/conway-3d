@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { step, popCount, hashGrid, gridsEqual } from './life.js';
+import { step, stepOffsets, popCount, hashGrid, gridsEqual } from './life.js';
 import { PRESETS } from './presets.js';
 
 // ---------------------------------------------------------------- constants
@@ -13,6 +13,7 @@ let size = 64;
 let wrap = false;
 let layerGap = 0.5;
 let history = [new Uint8Array(size * size)]; // history[g] = grid at generation g
+let offHistory = [null]; // per-gen torus winding offsets ({ox, oz} when wrap is on)
 let viewGen = 0; // generation the camera/timeline is looking at
 let playing = false;
 let speedIdx = 2;
@@ -101,7 +102,7 @@ function buildBoard() {
   );
 
   const ground = new THREE.Mesh(
-    new THREE.CircleGeometry(size * 1.9, 72),
+    new THREE.CircleGeometry(size * 3.5, 72),
     new THREE.MeshBasicMaterial({ color: 0x0c101a })
   );
   ground.rotation.x = -Math.PI / 2;
@@ -169,12 +170,16 @@ function layerY(gen) {
 function appendLayerRaw(grid, gen) {
   const h = Math.min(layerGap, 1) * 0.92;
   const y = layerY(gen);
+  const off = offHistory[gen];
   colorForGen(gen, _color);
   for (let z = 0; z < size; z++) {
     for (let x = 0; x < size; x++) {
-      if (!grid[z * size + x]) continue;
+      const i = z * size + x;
+      if (!grid[i]) continue;
+      const ux = off ? x + off.ox[i] * size : x;
+      const uz = off ? z + off.oz[i] * size : z;
       _mat4.makeScale(0.92, h, 0.92);
-      _mat4.setPosition(x - size / 2 + 0.5, y, z - size / 2 + 0.5);
+      _mat4.setPosition(ux - size / 2 + 0.5, y, uz - size / 2 + 0.5);
       cellMesh.setMatrixAt(instanceCount, _mat4);
       cellMesh.setColorAt(instanceCount, _color);
       instanceCount++;
@@ -224,12 +229,16 @@ function updateHighlight() {
   const hl = board.hlMesh;
   const h = Math.min(layerGap, 1);
   const y = layerY(viewGen);
+  const off = offHistory[viewGen];
   let n = 0;
   for (let z = 0; z < size; z++) {
     for (let x = 0; x < size; x++) {
-      if (!grid[z * size + x]) continue;
+      const i = z * size + x;
+      if (!grid[i]) continue;
+      const ux = off ? x + off.ox[i] * size : x;
+      const uz = off ? z + off.oz[i] * size : z;
       _mat4.makeScale(1, h, 1);
-      _mat4.setPosition(x - size / 2 + 0.5, y, z - size / 2 + 0.5);
+      _mat4.setPosition(ux - size / 2 + 0.5, y, uz - size / 2 + 0.5);
       hl.setMatrixAt(n++, _mat4);
     }
   }
@@ -252,8 +261,13 @@ function findSeen(grid) {
   return -1;
 }
 
+function zeroOffsets() {
+  return wrap ? { ox: new Int8Array(size * size), oz: new Int8Array(size * size) } : null;
+}
+
 function resetWorld(grid0) {
   history = [grid0];
+  offHistory = [zeroOffsets()];
   viewGen = 0;
   endReason = null;
   periodInfo = null;
@@ -271,6 +285,12 @@ function computeNext() {
   const next = step(cur, size, wrap);
   const gen = history.length;
   history.push(next);
+  if (wrap) {
+    const prev = offHistory[gen - 1];
+    offHistory.push(stepOffsets(cur, next, size, prev.ox, prev.oz));
+  } else {
+    offHistory.push(null);
+  }
   appendLayer(next, gen);
   if (popCount(next) === 0) {
     endReason = `💀 Died out at gen ${gen}`;
@@ -335,6 +355,7 @@ function truncateToBase() {
   if (history.length === 1 && !endReason) return;
   playing = false;
   history = [grid0];
+  offHistory = [zeroOffsets()];
   viewGen = 0;
   endReason = null;
   periodInfo = null;
@@ -554,6 +575,7 @@ ui.clear.addEventListener('click', () => {
 ui.wrap.addEventListener('change', () => {
   wrap = ui.wrap.checked;
   truncateToBase();
+  offHistory[0] = zeroOffsets();
   updateAllUI();
 });
 ui.follow.addEventListener('change', () => (follow = ui.follow.checked));
