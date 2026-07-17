@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#131c30"/>
+      <stop offset="1" stop-color="#0a0d14"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#bg)"/>
+
+  <!-- bottom cube · cyan (gen 0) -->
+  <polygon points="13,46 24,51.5 24,60.5 13,55" fill="#38c6f0"/>
+  <polygon points="35,46 24,51.5 24,60.5 35,55" fill="#1e93c9"/>
+  <polygon points="24,40.5 35,46 24,51.5 13,46" fill="#86ecff"/>
+
+  <!-- middle cube · blue -->
+  <polygon points="21,29 32,34.5 32,43.5 21,38" fill="#6ea8ff"/>
+  <polygon points="43,29 32,34.5 32,43.5 43,38" fill="#4a74d9"/>
+  <polygon points="32,23.5 43,29 32,34.5 21,29" fill="#a9c6ff"/>
+
+  <!-- top cube · purple (latest gen) -->
+  <polygon points="29,12 40,17.5 40,26.5 29,21" fill="#b06eff"/>
+  <polygon points="51,12 40,17.5 40,26.5 51,21" fill="#8449d6"/>
+  <polygon points="40,6.5 51,12 40,17.5 29,12" fill="#d9b3ff"/>
+</svg>
