@@ -432,7 +432,19 @@ function setDrawMode(on) {
 // ---------------------------------------------------------------- camera
 // Pull further back on narrow (portrait) viewports so the board still fits.
 function aspectZoom() {
-  return Math.max(1, 1.15 / camera.aspect);
+  return Math.max(1, 0.95 / camera.aspect);
+}
+
+// With the bottom sheet open on mobile, only the top half of the screen is
+// visible — shift the rendered view so the board sits there, not behind the sheet.
+function updateViewOffset() {
+  const w = window.innerWidth;
+  const h = window.innerHeight;
+  if (isMobile() && !panelEl.classList.contains('closed')) {
+    camera.setViewOffset(w, h, 0, h * 0.26, w, h);
+  } else {
+    camera.clearViewOffset();
+  }
 }
 
 function resetCamera() {
@@ -603,10 +615,16 @@ ui.modeDraw.addEventListener('click', () => setDrawMode(true));
 ui.modeOrbit.addEventListener('click', () => setDrawMode(false));
 
 const panelEl = $('panel');
-const isMobile = () => window.matchMedia('(max-width: 700px)').matches;
-$('btn-panel').addEventListener('click', () => panelEl.classList.toggle('closed'));
+const isMobile = () => window.matchMedia('(max-width: 700px), (max-height: 520px)').matches;
+$('btn-panel').addEventListener('click', () => {
+  panelEl.classList.toggle('closed');
+  updateViewOffset();
+});
 function closePanelOnMobile() {
-  if (isMobile()) panelEl.classList.add('closed');
+  if (isMobile()) {
+    panelEl.classList.add('closed');
+    updateViewOffset();
+  }
 }
 
 const infoModal = $('info-modal');
@@ -643,6 +661,7 @@ window.addEventListener('resize', () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
+  updateViewOffset();
 });
 
 // ---------------------------------------------------------------- boot + loop
@@ -651,6 +670,7 @@ resetCamera();
 buildPresetButtons();
 rebuildAllLayers();
 setDrawMode(true);
+updateViewOffset();
 updateAllUI();
 
 let lastT = performance.now();
