@@ -422,6 +422,7 @@ function setDrawMode(on) {
   drawMode = on;
   if (on) playing = false;
   controls.mouseButtons.LEFT = on ? null : THREE.MOUSE.ROTATE;
+  controls.touches.ONE = on ? null : THREE.TOUCH.ROTATE;
   board.cursor.visible = false;
   ui.modeDraw.classList.toggle('active', on);
   ui.modeOrbit.classList.toggle('active', !on);
@@ -429,8 +430,14 @@ function setDrawMode(on) {
 }
 
 // ---------------------------------------------------------------- camera
+// Pull further back on narrow (portrait) viewports so the board still fits.
+function aspectZoom() {
+  return Math.max(1, 1.15 / camera.aspect);
+}
+
 function resetCamera() {
-  camera.position.set(size * 0.85, size * 0.7, size * 1.05);
+  const f = aspectZoom();
+  camera.position.set(size * 0.85 * f, size * 0.7 * f, size * 1.05 * f);
   controls.target.set(0, size * 0.08, 0);
   controls.update();
 }
@@ -441,7 +448,7 @@ function frameTower() {
   const dy = top * 0.5 - controls.target.y;
   controls.target.y += dy;
   camera.position.y += dy;
-  const need = size * 0.9 + top * 0.72;
+  const need = (size * 0.9 + top * 0.72) * aspectZoom();
   const off = camera.position.clone().sub(controls.target);
   if (off.length() < need) {
     off.setLength(need);
@@ -499,6 +506,7 @@ function loadPreset(p) {
   resetWorld(grid0);
   setDrawMode(false);
   setPlaying(true);
+  closePanelOnMobile();
 }
 
 function drawThumb(canvas, pattern) {
@@ -543,6 +551,7 @@ function randomSoup() {
   resetWorld(grid0);
   setDrawMode(false);
   setPlaying(true);
+  closePanelOnMobile();
 }
 
 function setGridSize(n) {
@@ -554,7 +563,11 @@ function setGridSize(n) {
 }
 
 // ---------------------------------------------------------------- wiring
-ui.play.addEventListener('click', () => setPlaying(!playing));
+ui.play.addEventListener('click', () => {
+  const starting = !playing;
+  setPlaying(starting);
+  if (starting && playing) closePanelOnMobile();
+});
 ui.step.addEventListener('click', () => {
   if (drawMode) setDrawMode(false);
   setPlaying(false);
@@ -588,6 +601,13 @@ ui.sizeSel.addEventListener('change', () => setGridSize(parseInt(ui.sizeSel.valu
 ui.view.addEventListener('click', resetCamera);
 ui.modeDraw.addEventListener('click', () => setDrawMode(true));
 ui.modeOrbit.addEventListener('click', () => setDrawMode(false));
+
+const panelEl = $('panel');
+const isMobile = () => window.matchMedia('(max-width: 700px)').matches;
+$('btn-panel').addEventListener('click', () => panelEl.classList.toggle('closed'));
+function closePanelOnMobile() {
+  if (isMobile()) panelEl.classList.add('closed');
+}
 
 const infoModal = $('info-modal');
 $('btn-info').addEventListener('click', () => infoModal.classList.remove('hidden'));

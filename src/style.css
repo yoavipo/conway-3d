@@ -327,3 +327,60 @@ footer {
   text-align: center;
   letter-spacing: 0.5px;
 }
+
+#btn-panel {
+  display: none;
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  z-index: 6;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border-radius: 50%;
+  font-size: 19px;
+  background: var(--panel);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+@media (max-width: 700px) {
+  #btn-panel {
+    display: block;
+  }
+
+  #panel {
+    top: auto;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: auto;
+    max-height: 52vh;
+    border-radius: 16px 16px 0 0;
+    border-bottom: none;
+    padding-bottom: max(14px, env(safe-area-inset-bottom));
+    transition: transform 0.28s ease;
+  }
+
+  #panel.closed {
+    transform: translateY(105%);
+  }
+
+  footer {
+    display: none;
+  }
+
+  button {
+    padding: 9px 12px;
+  }
+
+  .transport button {
+    font-size: 17px;
+    padding: 11px 0;
+  }
+
+  .seg-btn,
+  .preset {
+    padding: 8px 6px;
+  }
+}
