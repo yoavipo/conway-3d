@@ -14,16 +14,16 @@
     <div id="mode-float">
       <button id="mode-draw" class="seg-btn active" title="Paint cells on the base grid (D)">✏️ Draw</button>
       <button id="mode-orbit" class="seg-btn" title="Rotate / zoom the camera (D toggles)">🔄 Orbit</button>
+      <button id="btn-view" class="seg-btn" title="Reset the camera view">⌂ Reset view</button>
     </div>
 
     <aside id="panel">
       <header id="panel-header">
         <h1>CONWAY<span>·3D</span></h1>
         <p class="sub">time is the third dimension</p>
+        <button id="btn-info" aria-label="What is the Game of Life?" title="What is the Game of Life? · מה זה משחק החיים?">i</button>
         <button id="btn-collapse" title="Show / hide controls">▾</button>
       </header>
-
-      <button id="btn-info">🧬 מה זה משחק החיים? <span>· What is this?</span></button>
 
       <section class="row transport">
         <button id="btn-rewind" title="All the way back (generation 0)">⏮</button>
@@ -76,35 +76,17 @@
             <option value="96">96 × 96</option>
           </select>
         </div>
-        <button id="btn-view" class="wide">⌂ Reset view</button>
       </section>
 
       <footer>space play · d draw/orbit · ← → scrub</footer>
     </aside>
 
-    <div id="info-modal" class="hidden">
+    <div id="info-modal" class="hidden" data-lang="en">
       <div class="info-card">
-        <div class="he" dir="rtl">
-          <h3>משחק החיים של קונוויי</h3>
-          <p>
-            משחק של <b>אפס שחקנים</b> שהמציא המתמטיקאי ג'ון קונוויי ב-1970: מציירים תבנית
-            פתיחה על הלוח, ומכאן הכול נקבע מעצמו — בלי קלט, בלי אקראיות, רק ארבעה חוקים.
-          </p>
-          <p>בכל דור, כל תא סופר את 8 שכניו:</p>
-          <ul>
-            <li><b>בדידות</b> — תא חי עם פחות מ-2 שכנים מת</li>
-            <li><b>הישרדות</b> — תא חי עם 2 או 3 שכנים ממשיך לחיות</li>
-            <li><b>צפיפות</b> — תא חי עם יותר מ-3 שכנים מת</li>
-            <li><b>לידה</b> — תא מת עם בדיוק 3 שכנים קם לתחייה</li>
-          </ul>
-          <p>
-            כאן הלוח הוא הרצפה, וכל דור נערם מעל קודמו — <b>גובה = זמן</b>: גליידרים מציירים
-            סרטים אלכסוניים, מתנדים בונים עמודים מחזוריים, ותבניות שגוועות משאירות מגדל
-            שפשוט… נעצר.
-          </p>
-          <p class="fun">🤯 המשחק הוא Turing Complete — אפשר לבנות בתוכו מחשב שלם.</p>
-        </div>
-        <hr />
+        <button id="lang-toggle" aria-label="Read in Hebrew">
+          <span aria-hidden="true">🌐</span>
+          <span id="lang-toggle-label">עברית</span>
+        </button>
         <div class="en">
           <h3>Conway's Game of Life</h3>
           <p>
@@ -126,7 +108,27 @@
           </p>
           <p class="fun">🤯 The game is Turing complete — you can build a whole computer inside it.</p>
         </div>
-        <button id="info-close" class="wide">הבנתי · Got it</button>
+        <div class="he" dir="rtl">
+          <h3>משחק החיים של קונוויי</h3>
+          <p>
+            משחק של <b>אפס שחקנים</b> שהמציא המתמטיקאי ג'ון קונוויי ב-1970: מציירים תבנית
+            פתיחה על הלוח, ומכאן הכול נקבע מעצמו — בלי קלט, בלי אקראיות, רק ארבעה חוקים.
+          </p>
+          <p>בכל דור, כל תא סופר את 8 שכניו:</p>
+          <ul>
+            <li><b>בדידות</b> — תא חי עם פחות מ-2 שכנים מת</li>
+            <li><b>הישרדות</b> — תא חי עם 2 או 3 שכנים ממשיך לחיות</li>
+            <li><b>צפיפות</b> — תא חי עם יותר מ-3 שכנים מת</li>
+            <li><b>לידה</b> — תא מת עם בדיוק 3 שכנים קם לתחייה</li>
+          </ul>
+          <p>
+            כאן הלוח הוא הרצפה, וכל דור נערם מעל קודמו — <b>גובה = זמן</b>: גליידרים מציירים
+            סרטים אלכסוניים, מתנדים בונים עמודים מחזוריים, ותבניות שגוועות משאירות מגדל
+            שפשוט… נעצר.
+          </p>
+          <p class="fun">🤯 המשחק הוא Turing Complete — אפשר לבנות בתוכו מחשב שלם.</p>
+        </div>
+        <button id="info-close" class="wide">Got it</button>
       </div>
     </div>
 

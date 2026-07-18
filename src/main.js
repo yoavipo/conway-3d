@@ -638,11 +638,27 @@ function closePanelOnMobile() {
 }
 
 const infoModal = $('info-modal');
+const langToggle = $('lang-toggle');
+const langToggleLabel = $('lang-toggle-label');
+const infoClose = $('info-close');
+
+function setInfoLanguage(lang) {
+  const isHebrew = lang === 'he';
+  infoModal.dataset.lang = isHebrew ? 'he' : 'en';
+  langToggleLabel.textContent = isHebrew ? 'English' : 'עברית';
+  langToggle.setAttribute('aria-label', isHebrew ? 'Read in English' : 'Read in Hebrew');
+  infoClose.textContent = isHebrew ? 'הבנתי' : 'Got it';
+}
+
 $('btn-info').addEventListener('click', (e) => {
   e.stopPropagation();
+  setInfoLanguage('en');
   infoModal.classList.remove('hidden');
 });
-$('info-close').addEventListener('click', () => infoModal.classList.add('hidden'));
+langToggle.addEventListener('click', () => {
+  setInfoLanguage(infoModal.dataset.lang === 'en' ? 'he' : 'en');
+});
+infoClose.addEventListener('click', () => infoModal.classList.add('hidden'));
 infoModal.addEventListener('click', (e) => {
   if (e.target === infoModal) infoModal.classList.add('hidden');
 });
