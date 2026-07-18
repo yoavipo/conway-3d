@@ -616,9 +616,16 @@ ui.modeOrbit.addEventListener('click', () => setDrawMode(false));
 
 const panelEl = $('panel');
 const isMobile = () => window.matchMedia('(max-width: 700px), (max-height: 520px)').matches;
-$('btn-panel').addEventListener('click', () => {
+function togglePanel() {
   panelEl.classList.toggle('closed');
   updateViewOffset();
+}
+$('btn-collapse').addEventListener('click', (e) => {
+  e.stopPropagation();
+  togglePanel();
+});
+$('panel-header').addEventListener('click', () => {
+  if (isMobile()) togglePanel();
 });
 function closePanelOnMobile() {
   if (isMobile()) {
@@ -628,7 +635,10 @@ function closePanelOnMobile() {
 }
 
 const infoModal = $('info-modal');
-$('btn-info').addEventListener('click', () => infoModal.classList.remove('hidden'));
+$('btn-info').addEventListener('click', (e) => {
+  e.stopPropagation();
+  infoModal.classList.remove('hidden');
+});
 $('info-close').addEventListener('click', () => infoModal.classList.add('hidden'));
 infoModal.addEventListener('click', (e) => {
   if (e.target === infoModal) infoModal.classList.add('hidden');
@@ -672,6 +682,85 @@ rebuildAllLayers();
 setDrawMode(true);
 updateViewOffset();
 updateAllUI();
+
+// Dev helper: capture the computed tower as square frames (growing + slow orbit)
+// and POST them to a local collector, for turning runs into GIFs/videos.
+window.__capture = async ({ stepPer = 3, outSize = 720, holdFrames = 20 } = {}) => {
+  const total = history.length - 1;
+  panelEl.style.display = 'none';
+  controls.enabled = false;
+  renderer.setPixelRatio(1);
+  renderer.setSize(outSize, outSize, false);
+  camera.aspect = 1;
+  camera.updateProjectionMatrix();
+  const top = total * layerGap;
+  // Frame the true bounding box of every rendered (unwrapped) cell.
+  let minX = 1e9;
+  let maxX = -1e9;
+  let minZ = 1e9;
+  let maxZ = -1e9;
+  for (let g = 0; g <= total; g++) {
+    const grid = history[g];
+    const off = offHistory[g];
+    for (let z = 0; z < size; z++) {
+      for (let x = 0; x < size; x++) {
+        const i = z * size + x;
+        if (!grid[i]) continue;
+        const ux = (off ? x + off.ox[i] * size : x) - size / 2 + 0.5;
+        const uz = (off ? z + off.oz[i] * size : z) - size / 2 + 0.5;
+        if (ux < minX) minX = ux;
+        if (ux > maxX) maxX = ux;
+        if (uz < minZ) minZ = uz;
+        if (uz > maxZ) maxZ = uz;
+      }
+    }
+  }
+  minX = Math.min(minX, -size / 2);
+  maxX = Math.max(maxX, size / 2);
+  minZ = Math.min(minZ, -size / 2);
+  maxZ = Math.max(maxZ, size / 2);
+  const target = new THREE.Vector3((minX + maxX) / 2, top * 0.5, (minZ + maxZ) / 2);
+  const radius = 0.5 * Math.hypot(maxX - minX, maxZ - minZ, top);
+  const dist = Math.max(radius * 2.4, size * 1.6);
+  const polar = 1.08;
+  const cvs = document.createElement('canvas');
+  cvs.width = outSize;
+  cvs.height = outSize;
+  const ctx = cvs.getContext('2d');
+  let idx = 0;
+  const shoot = async (g, angle) => {
+    setViewGen(g);
+    camera.position.set(
+      target.x + dist * Math.sin(polar) * Math.sin(angle),
+      target.y + dist * Math.cos(polar),
+      target.z + dist * Math.sin(polar) * Math.cos(angle)
+    );
+    camera.lookAt(target);
+    renderer.render(scene, camera);
+    const src = renderer.domElement;
+    const m = Math.min(src.width, src.height);
+    ctx.drawImage(src, (src.width - m) / 2, (src.height - m) / 2, m, m, 0, 0, outSize, outSize);
+    // toDataURL is synchronous — unlike toBlob, it can't be deferred by
+    // background-tab throttling.
+    const dataUrl = cvs.toDataURL('image/jpeg', 0.92);
+    await fetch(`/__frame?i=${idx++}`, { method: 'POST', body: dataUrl });
+  };
+  const angleAt = (f, nf) => -0.5 + (1.0 * f) / nf;
+  const growFrames = Math.ceil(total / stepPer);
+  for (let f = 0; f <= growFrames; f++) {
+    await shoot(Math.min(f * stepPer, total), angleAt(f, growFrames + holdFrames));
+  }
+  for (let f = 1; f <= holdFrames; f++) {
+    await shoot(total, angleAt(growFrames + f, growFrames + holdFrames));
+  }
+  panelEl.style.display = '';
+  controls.enabled = true;
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  return idx;
+};
 
 let lastT = performance.now();
 renderer.setAnimationLoop((t) => {
