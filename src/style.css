@@ -70,24 +70,29 @@ header {
 
 #btn-info {
   position: absolute;
-  top: 0;
+  top: -3px;
   right: 0;
-  width: 24px;
-  height: 24px;
+  width: 30px;
+  height: 30px;
   padding: 0;
   border-radius: 50%;
-  border: 1px solid rgba(110, 168, 255, 0.55);
-  background: linear-gradient(135deg, rgba(110, 168, 255, 0.18), rgba(176, 110, 255, 0.18));
-  color: var(--accent);
-  font-size: 13px;
+  border: 1px solid rgba(156, 199, 255, 0.9);
+  background: linear-gradient(135deg, rgba(75, 148, 255, 0.58), rgba(157, 80, 255, 0.52));
+  color: #fff;
+  font-size: 16px;
+  font-weight: 700;
   font-style: italic;
   font-family: Georgia, serif;
   line-height: 1;
+  box-shadow: 0 0 18px rgba(110, 168, 255, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transition: transform 0.15s, background 0.15s, border-color 0.15s, box-shadow 0.15s;
 }
 
 #btn-info:hover {
-  background: linear-gradient(135deg, rgba(110, 168, 255, 0.32), rgba(176, 110, 255, 0.32));
-  color: #fff;
+  transform: scale(1.08);
+  background: linear-gradient(135deg, rgba(90, 162, 255, 0.78), rgba(176, 98, 255, 0.72));
+  border-color: #c5ddff;
+  box-shadow: 0 0 24px rgba(110, 168, 255, 0.46), inset 0 1px 0 rgba(255, 255, 255, 0.25);
 }
 
 #mode-float {
@@ -234,6 +239,21 @@ header {
   background: rgba(176, 110, 255, 0.12);
   border: 1px solid rgba(176, 110, 255, 0.25);
   font-size: 12.5px;
+}
+
+.info-card .video-link {
+  display: block;
+  color: #e7efff;
+  font-weight: 700;
+  text-align: center;
+  text-decoration: none;
+  transition: background 0.15s, border-color 0.15s, transform 0.15s;
+}
+
+.info-card .video-link:hover {
+  transform: translateY(-1px);
+  background: rgba(176, 110, 255, 0.22);
+  border-color: rgba(176, 110, 255, 0.5);
 }
 
 header h1 {
