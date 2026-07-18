@@ -39,3 +39,19 @@ dependency-free in `src/life.js`; patterns in `src/presets.js`.
 ## Keyboard
 
 `space` play/pause · `d` draw/orbit · `←`/`→` step through generations
+
+## Analytics
+
+Umami receives an anonymous browser ID so repeat visits from the same browser can be
+grouped under one Distinct ID. The ID contains no personal information and remains only
+in that browser's local storage.
+
+To exclude the current browser from analytics for 24 hours, run this on the live site's
+developer console:
+
+```js
+conwayAnalytics.disableFor24Hours();
+```
+
+Tracking resumes automatically after 24 hours. To resume it immediately, run
+`conwayAnalytics.enable()`.
