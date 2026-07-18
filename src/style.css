@@ -451,21 +451,64 @@ footer {
 #btn-collapse {
   display: none;
   position: absolute;
-  top: -2px;
+  top: -4px;
   right: 0;
-  width: 30px;
-  height: 26px;
+  width: 38px;
+  height: 32px;
   padding: 0;
-  border: none;
-  background: none;
-  color: var(--muted);
-  font-size: 15px;
-  transition: transform 0.28s ease;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  border: 1px solid rgba(139, 187, 255, 0.48);
+  background: linear-gradient(135deg, rgba(110, 168, 255, 0.2), rgba(176, 110, 255, 0.18));
+  box-shadow: 0 0 14px rgba(110, 168, 255, 0.13), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+
+#btn-collapse:hover {
+  border-color: rgba(176, 210, 255, 0.8);
+  background: linear-gradient(135deg, rgba(110, 168, 255, 0.34), rgba(176, 110, 255, 0.3));
+  box-shadow: 0 0 18px rgba(110, 168, 255, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.accordion-chevron {
+  position: relative;
+  display: block;
+  width: 22px;
+  height: 12px;
+  transition: transform 0.18s ease;
+}
+
+.accordion-chevron::before,
+.accordion-chevron::after {
+  content: '';
+  position: absolute;
+  top: 4px;
+  width: 13px;
+  height: 3px;
+  border-radius: 999px;
+  background: #d9e8ff;
+  box-shadow: 0 0 6px rgba(110, 168, 255, 0.45);
+  transition: transform 0.34s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.2s;
+}
+
+.accordion-chevron::before {
+  left: 0;
+  transform: rotate(35deg);
+}
+
+.accordion-chevron::after {
+  right: 0;
+  transform: rotate(-35deg);
+}
+
+#btn-collapse:active .accordion-chevron {
+  transform: scale(0.82);
 }
 
 @media (max-width: 700px), (max-height: 520px) {
   #btn-info {
-    right: 36px;
+    right: 46px;
   }
 
   #mode-float {
@@ -481,11 +524,15 @@ footer {
   }
 
   #btn-collapse {
-    display: block;
+    display: flex;
   }
 
-  #panel.closed #btn-collapse {
-    transform: rotate(180deg);
+  #panel.closed .accordion-chevron::before {
+    transform: rotate(-35deg);
+  }
+
+  #panel.closed .accordion-chevron::after {
+    transform: rotate(35deg);
   }
 
   #panel.closed {
@@ -522,5 +569,14 @@ footer {
   .seg-btn,
   .preset {
     padding: 8px 6px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #panel,
+  .accordion-chevron,
+  .accordion-chevron::before,
+  .accordion-chevron::after {
+    transition: none;
   }
 }

@@ -618,12 +618,20 @@ ui.modeDraw.addEventListener('click', () => setDrawMode(true));
 ui.modeOrbit.addEventListener('click', () => setDrawMode(false));
 
 const panelEl = $('panel');
+const collapseButton = $('btn-collapse');
 const isMobile = () => window.matchMedia('(max-width: 700px), (max-height: 520px)').matches;
+function updateCollapseButton() {
+  const isClosed = panelEl.classList.contains('closed');
+  collapseButton.setAttribute('aria-expanded', String(!isClosed));
+  collapseButton.setAttribute('aria-label', isClosed ? 'Expand controls' : 'Collapse controls');
+  collapseButton.title = isClosed ? 'Expand controls' : 'Collapse controls';
+}
 function togglePanel() {
   panelEl.classList.toggle('closed');
+  updateCollapseButton();
   updateViewOffset();
 }
-$('btn-collapse').addEventListener('click', (e) => {
+collapseButton.addEventListener('click', (e) => {
   e.stopPropagation();
   togglePanel();
 });
@@ -633,6 +641,7 @@ $('panel-header').addEventListener('click', () => {
 function closePanelOnMobile() {
   if (isMobile()) {
     panelEl.classList.add('closed');
+    updateCollapseButton();
     updateViewOffset();
   }
 }
@@ -716,6 +725,7 @@ rebuildAllLayers();
 setDrawMode(true);
 updateViewOffset();
 updateAllUI();
+updateCollapseButton();
 
 // Dev helper: capture the computed tower as square frames (growing + slow orbit)
 // and POST them to a local collector, for turning runs into GIFs/videos.
