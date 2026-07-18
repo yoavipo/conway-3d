@@ -11,24 +11,30 @@
   <body>
     <div id="app"></div>
 
+    <div id="mode-float">
+      <button id="mode-draw" class="seg-btn active" title="Paint cells on the base grid (D)">✏️ Draw</button>
+      <button id="mode-orbit" class="seg-btn" title="Rotate / zoom the camera (D toggles)">🔄 Orbit</button>
+    </div>
+
     <aside id="panel">
       <header id="panel-header">
         <h1>CONWAY<span>·3D</span></h1>
         <p class="sub">time is the third dimension</p>
-        <button id="btn-info" title="How does the Game of Life work?">i</button>
         <button id="btn-collapse" title="Show / hide controls">▾</button>
       </header>
 
-      <section class="row seg" id="mode-seg">
-        <button id="mode-draw" class="seg-btn active" title="Paint cells on the base grid (D)">✏️ Draw</button>
-        <button id="mode-orbit" class="seg-btn" title="Rotate / zoom the camera (D toggles)">🔄 Orbit</button>
-      </section>
+      <button id="btn-info">🧬 מה זה משחק החיים? <span>· What is this?</span></button>
 
       <section class="row transport">
         <button id="btn-rewind" title="Rewind to generation 0">⏮</button>
         <button id="btn-play" class="accent" title="Play / pause (Space)">▶</button>
         <button id="btn-step" title="Advance one generation">⏭</button>
         <button id="btn-end" title="Run instantly to the end">⏩</button>
+      </section>
+
+      <section class="row actions">
+        <button id="btn-random" title="Fill the middle with a random soup">🎲 Random</button>
+        <button id="btn-clear" title="Clear the grid">🗑 Clear</button>
       </section>
 
       <section class="slider-row">
@@ -51,10 +57,6 @@
       <section>
         <h2>Presets</h2>
         <div id="presets"></div>
-        <div class="row actions">
-          <button id="btn-random" title="Fill the middle with a random soup">🎲 Random</button>
-          <button id="btn-clear" title="Clear the grid">🗑 Clear</button>
-        </div>
       </section>
 
       <section>
@@ -81,25 +83,49 @@
 
     <div id="info-modal" class="hidden">
       <div class="info-card">
-        <h3>Conway's Game of Life</h3>
-        <p>
-          A zero-player game invented by mathematician John Conway in 1970. Cells on a grid
-          live or die by four simple rules — no input, no randomness; everything unfolds
-          from the starting pattern.
-        </p>
-        <p>Every generation, each cell counts its 8 neighbors:</p>
-        <ul>
-          <li><b>Loneliness</b> — a live cell with fewer than 2 neighbors dies</li>
-          <li><b>Survival</b> — a live cell with 2 or 3 neighbors lives on</li>
-          <li><b>Overcrowding</b> — a live cell with more than 3 neighbors dies</li>
-          <li><b>Birth</b> — a dead cell with exactly 3 neighbors comes alive</li>
-        </ul>
-        <p>
-          In this app the grid is the floor and every generation is stacked on top of the
-          last, so <b>height = time</b>: gliders trace diagonal ribbons, oscillators grow
-          repeating columns, and dying patterns leave towers that simply… stop.
-        </p>
-        <button id="info-close" class="wide">Got it</button>
+        <div class="he" dir="rtl">
+          <h3>משחק החיים של קונוויי</h3>
+          <p>
+            משחק של <b>אפס שחקנים</b> שהמציא המתמטיקאי ג'ון קונוויי ב-1970: מציירים תבנית
+            פתיחה על הלוח, ומכאן הכול נקבע מעצמו — בלי קלט, בלי אקראיות, רק ארבעה חוקים.
+          </p>
+          <p>בכל דור, כל תא סופר את 8 שכניו:</p>
+          <ul>
+            <li><b>בדידות</b> — תא חי עם פחות מ-2 שכנים מת</li>
+            <li><b>הישרדות</b> — תא חי עם 2 או 3 שכנים ממשיך לחיות</li>
+            <li><b>צפיפות</b> — תא חי עם יותר מ-3 שכנים מת</li>
+            <li><b>לידה</b> — תא מת עם בדיוק 3 שכנים קם לתחייה</li>
+          </ul>
+          <p>
+            כאן הלוח הוא הרצפה, וכל דור נערם מעל קודמו — <b>גובה = זמן</b>: גליידרים מציירים
+            סרטים אלכסוניים, מתנדים בונים עמודים מחזוריים, ותבניות שגוועות משאירות מגדל
+            שפשוט… נעצר.
+          </p>
+          <p class="fun">🤯 המשחק הוא Turing Complete — אפשר לבנות בתוכו מחשב שלם.</p>
+        </div>
+        <hr />
+        <div class="en">
+          <h3>Conway's Game of Life</h3>
+          <p>
+            A <b>zero-player</b> game invented by mathematician John Conway in 1970: draw a
+            starting pattern, and everything unfolds on its own — no input, no randomness,
+            just four rules.
+          </p>
+          <p>Every generation, each cell counts its 8 neighbors:</p>
+          <ul>
+            <li><b>Loneliness</b> — a live cell with fewer than 2 neighbors dies</li>
+            <li><b>Survival</b> — a live cell with 2 or 3 neighbors lives on</li>
+            <li><b>Overcrowding</b> — a live cell with more than 3 neighbors dies</li>
+            <li><b>Birth</b> — a dead cell with exactly 3 neighbors comes alive</li>
+          </ul>
+          <p>
+            Here the grid is the floor and every generation stacks on top of the last, so
+            <b>height = time</b>: gliders trace diagonal ribbons, oscillators grow repeating
+            columns, and dying patterns leave towers that simply… stop.
+          </p>
+          <p class="fun">🤯 The game is Turing complete — you can build a whole computer inside it.</p>
+        </div>
+        <button id="info-close" class="wide">הבנתי · Got it</button>
       </div>
     </div>
 

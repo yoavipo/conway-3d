@@ -57,7 +57,6 @@ const ui = {
 // ---------------------------------------------------------------- three setup
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-renderer.setSize(window.innerWidth, window.innerHeight);
 $('app').appendChild(renderer.domElement);
 
 const scene = new THREE.Scene();
@@ -667,15 +666,30 @@ window.addEventListener('keydown', (e) => {
   }
 });
 
-window.addEventListener('resize', () => {
-  camera.aspect = window.innerWidth / window.innerHeight;
+// Apply the current viewport size whenever it changes (also called every frame:
+// some embedded browsers report 0x0 at load, which would poison the camera with
+// NaNs — this recovers as soon as real dimensions appear).
+let lastW = 0;
+let lastH = 0;
+function applyViewportSize() {
+  const w = window.innerWidth;
+  const h = window.innerHeight;
+  if (!w || !h || (w === lastW && h === lastH)) return;
+  const firstRealSize = lastW === 0;
+  lastW = w;
+  lastH = h;
+  camera.aspect = w / h;
   camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setSize(w, h);
   updateViewOffset();
-});
+  if (firstRealSize) resetCamera();
+}
+
+window.addEventListener('resize', applyViewportSize);
 
 // ---------------------------------------------------------------- boot + loop
 buildBoard();
+applyViewportSize();
 resetCamera();
 buildPresetButtons();
 rebuildAllLayers();
@@ -688,6 +702,7 @@ updateAllUI();
 window.__capture = async ({ stepPer = 3, outSize = 720, holdFrames = 20 } = {}) => {
   const total = history.length - 1;
   panelEl.style.display = 'none';
+  $('mode-float').style.display = 'none';
   controls.enabled = false;
   renderer.setPixelRatio(1);
   renderer.setSize(outSize, outSize, false);
@@ -754,6 +769,7 @@ window.__capture = async ({ stepPer = 3, outSize = 720, holdFrames = 20 } = {}) 
     await shoot(total, angleAt(growFrames + f, growFrames + holdFrames));
   }
   panelEl.style.display = '';
+  $('mode-float').style.display = '';
   controls.enabled = true;
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.setSize(window.innerWidth, window.innerHeight);
@@ -762,8 +778,19 @@ window.__capture = async ({ stepPer = 3, outSize = 720, holdFrames = 20 } = {}) 
   return idx;
 };
 
+window.__dbg = () => ({
+  cam: camera.position.toArray().map((v) => +v.toFixed(1)),
+  target: controls.target.toArray().map((v) => +v.toFixed(1)),
+  aspect: +camera.aspect.toFixed(3),
+  viewOffset: camera.view ? { ...camera.view } : null,
+  cells: instanceCount,
+  meshCount: cellMesh ? cellMesh.count : -1,
+  rendererSize: [renderer.domElement.width, renderer.domElement.height],
+});
+
 let lastT = performance.now();
 renderer.setAnimationLoop((t) => {
+  applyViewportSize();
   const dt = Math.min((t - lastT) / 1000, 0.1);
   lastT = t;
   if (playing) {
