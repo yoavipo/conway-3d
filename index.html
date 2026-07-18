@@ -7,43 +7,50 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="stylesheet" href="/src/style.css" />
+    <script
+      defer
+      src="https://cloud.umami.is/script.js"
+      data-website-id="add58a68-8538-4861-ae9e-6f75e7cd1821"
+      data-domains="conway-3d.hiloola.app"
+    ></script>
   </head>
   <body>
     <div id="app"></div>
 
     <div id="mode-float">
-      <button id="mode-draw" class="seg-btn active" title="Paint cells on the base grid (D)">✏️ Draw</button>
-      <button id="mode-orbit" class="seg-btn" title="Rotate / zoom the camera (D toggles)">🔄 Orbit</button>
-      <button id="btn-view" class="seg-btn" title="Reset the camera view">⌂ Reset view</button>
+      <button id="mode-draw" class="seg-btn active" title="Paint cells on the base grid (D)" data-umami-event="view-draw">✏️ Draw</button>
+      <button id="mode-orbit" class="seg-btn" title="Rotate / zoom the camera (D toggles)" data-umami-event="view-orbit">🔄 Orbit</button>
+      <button id="btn-view" class="seg-btn" title="Reset the camera view" data-umami-event="view-reset">⌂ Reset view</button>
     </div>
 
     <aside id="panel">
       <header id="panel-header">
         <h1>CONWAY<span>·3D</span></h1>
         <p class="sub">time is the third dimension</p>
-        <button id="btn-info" aria-label="What is the Game of Life?" title="What is the Game of Life? · מה זה משחק החיים?">i</button>
+        <button id="btn-info" aria-label="What is the Game of Life?" title="What is the Game of Life? · מה זה משחק החיים?" data-umami-event="info-open">i</button>
         <button
           id="btn-collapse"
           type="button"
           aria-label="Collapse controls"
           aria-expanded="true"
           title="Collapse controls"
+          data-umami-event="panel-toggle"
         >
           <span class="accordion-chevron" aria-hidden="true"></span>
         </button>
       </header>
 
       <section class="row transport">
-        <button id="btn-rewind" title="All the way back (generation 0)">⏮</button>
-        <button id="btn-back" title="One generation back (←)">⏪</button>
-        <button id="btn-play" class="accent" title="Play / pause (Space)">▶</button>
-        <button id="btn-step" title="One generation forward (→)">⏩</button>
-        <button id="btn-end" title="All the way forward (run to the end)">⏭</button>
+        <button id="btn-rewind" title="All the way back (generation 0)" data-umami-event="simulation-rewind">⏮</button>
+        <button id="btn-back" title="One generation back (←)" data-umami-event="simulation-back">⏪</button>
+        <button id="btn-play" class="accent" title="Play / pause (Space)" data-umami-event="simulation-play-toggle">▶</button>
+        <button id="btn-step" title="One generation forward (→)" data-umami-event="simulation-step">⏩</button>
+        <button id="btn-end" title="All the way forward (run to the end)" data-umami-event="simulation-run-to-end">⏭</button>
       </section>
 
       <section class="row actions">
-        <button id="btn-random" title="Fill the middle with a random soup">🎲 Random</button>
-        <button id="btn-clear" title="Clear the grid">🗑 Clear</button>
+        <button id="btn-random" title="Fill the middle with a random soup" data-umami-event="board-random">🎲 Random</button>
+        <button id="btn-clear" title="Clear the grid" data-umami-event="board-clear">🗑 Clear</button>
       </section>
 
       <section class="slider-row">
@@ -91,7 +98,7 @@
 
     <div id="info-modal" class="hidden" data-lang="en">
       <div class="info-card">
-        <button id="lang-toggle" aria-label="Read in Hebrew">
+        <button id="lang-toggle" aria-label="Read in Hebrew" data-umami-event="info-language-toggle">
           <span aria-hidden="true">🌐</span>
           <span id="lang-toggle-label">עברית</span>
         </button>
@@ -119,6 +126,8 @@
             href="https://www.youtube.com/watch?v=HeQX2HjkcNo&amp;t=68s"
             target="_blank"
             rel="noopener noreferrer"
+            data-umami-event="video-veritasium"
+            data-umami-event-language="en"
           >
             ▶ Watch Veritasium explain the Game of Life
           </a>
@@ -146,11 +155,13 @@
             href="https://www.youtube.com/watch?v=HeQX2HjkcNo&amp;t=68s"
             target="_blank"
             rel="noopener noreferrer"
+            data-umami-event="video-veritasium"
+            data-umami-event-language="he"
           >
             לצפייה בהסבר של Veritasium על משחק החיים ◀
           </a>
         </div>
-        <button id="info-close" class="wide">Got it</button>
+        <button id="info-close" class="wide" data-umami-event="info-close">Got it</button>
       </div>
     </div>
 

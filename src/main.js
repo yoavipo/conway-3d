@@ -541,6 +541,8 @@ function buildPresetButtons() {
     const btn = document.createElement('button');
     btn.className = 'preset';
     btn.title = p.desc;
+    btn.setAttribute('data-umami-event', 'preset-select');
+    btn.setAttribute('data-umami-event-preset', p.name);
     const cv = document.createElement('canvas');
     drawThumb(cv, p.pattern);
     const label = document.createElement('span');
