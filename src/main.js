@@ -584,6 +584,10 @@ ui.step.addEventListener('click', () => {
   setPlaying(false);
   advance();
 });
+$('btn-back').addEventListener('click', () => {
+  setPlaying(false);
+  setViewGen(viewGen - 1);
+});
 ui.end.addEventListener('click', runToEnd);
 ui.rewind.addEventListener('click', () => setViewGen(0));
 ui.speed.addEventListener('input', () => {
