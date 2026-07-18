@@ -41,8 +41,13 @@ body {
   display: block;
 }
 
+#app {
+  z-index: 0;
+}
+
 #panel {
   position: fixed;
+  z-index: 6;
   top: 14px;
   left: 14px;
   bottom: 14px;
@@ -100,7 +105,7 @@ header {
   top: 12px;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 5;
+  z-index: 7;
   display: flex;
   gap: 6px;
   padding: 6px;
@@ -551,6 +556,7 @@ footer {
     border-bottom: none;
     padding-bottom: max(14px, env(safe-area-inset-bottom));
     transition: transform 0.28s ease;
+    will-change: transform;
   }
 
   footer {

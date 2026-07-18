@@ -626,10 +626,17 @@ function updateCollapseButton() {
   collapseButton.setAttribute('aria-label', isClosed ? 'Expand controls' : 'Collapse controls');
   collapseButton.title = isClosed ? 'Expand controls' : 'Collapse controls';
 }
-function togglePanel() {
-  panelEl.classList.toggle('closed');
+function setPanelClosed(closed) {
+  // Preset buttons sit below the fold on mobile. If we preserve that scroll
+  // position while collapsing, the 64px handle shows mid-panel content and the
+  // header appears to vanish. Always bring the handle back into the visible slice.
+  if (closed) panelEl.scrollTop = 0;
+  panelEl.classList.toggle('closed', closed);
   updateCollapseButton();
   updateViewOffset();
+}
+function togglePanel() {
+  setPanelClosed(!panelEl.classList.contains('closed'));
 }
 collapseButton.addEventListener('click', (e) => {
   e.stopPropagation();
@@ -639,11 +646,7 @@ $('panel-header').addEventListener('click', () => {
   if (isMobile()) togglePanel();
 });
 function closePanelOnMobile() {
-  if (isMobile()) {
-    panelEl.classList.add('closed');
-    updateCollapseButton();
-    updateViewOffset();
-  }
+  if (isMobile()) setPanelClosed(true);
 }
 
 const infoModal = $('info-modal');
